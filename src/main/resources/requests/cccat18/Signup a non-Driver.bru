@@ -1,0 +1,20 @@
+meta {
+  name: Signup a non-Driver
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Maria Betania",
+    "email": "maria.betania@gmail.com",
+    "cpf": "17463269051",
+    "password": "123456"
+  }
+}

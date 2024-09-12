@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "cccat18",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

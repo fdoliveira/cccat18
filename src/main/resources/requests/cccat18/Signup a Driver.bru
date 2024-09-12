@@ -1,0 +1,22 @@
+meta {
+  name: Signup a Driver
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Joao Maria",
+    "email": "joao.maria@gmail.com",
+    "cpf": "09527515009",
+    "is_driver": true,
+    "car_plate": "AAA1111",
+    "password": "123456"
+  }
+}
