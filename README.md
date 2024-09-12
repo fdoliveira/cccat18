@@ -1,4 +1,4 @@
-Este conteúdo é fork, não literal, do curso Clean Code e Clean Architecture da Branas.io
+Este conteúdo é um fork, não literal, do curso Clean Code e Clean Architecture da Branas.io
 
 Meu intuito é refazer o código feito originalmente em Typescript e NodeJS para Kotlin e Ktor.
 
