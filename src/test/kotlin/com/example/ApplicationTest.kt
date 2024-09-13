@@ -135,4 +135,23 @@ class ApplicationTest {
         }.bodyAsText()
         assertEquals(response, "-2")
     }
+
+    @Test
+    fun givenAnInvalidCpf_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        val client = createClient()
+        val account = Account(
+            name = "John Doe",
+            cpf = "1746326905",
+            email = "john.doe${Math.random()}@gmail.com",
+            isPassenger = true,
+            password = "123456"
+        )
+        val response = client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(account)
+        }.apply {
+            assertEquals(HttpStatusCode.UnprocessableEntity, status)
+        }.bodyAsText()
+        assertEquals(response, "-1")
+    }
 }
