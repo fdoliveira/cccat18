@@ -5,10 +5,10 @@ create schema ccca;
 create table ccca.account (
 	account_id uuid primary key,
 	name text not null,
-	email text not null,
+	email text not null unique,
 	cpf text not null,
-	car_plate text null,
 	is_passenger boolean not null default false,
 	is_driver boolean not null default false,
+	car_plate text null,
 	password text not null
 );
