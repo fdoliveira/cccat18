@@ -69,7 +69,7 @@ class ApplicationTest {
     }
 
     @Test
-    fun givenValidPDriver_whenCallSignUp_thenCreateDriver() = testApplication {
+    fun givenValidDriver_whenCallSignUp_thenCreateDriver() = testApplication {
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -96,5 +96,24 @@ class ApplicationTest {
         assertEquals(account.isPassenger, accountResponse.isPassenger)
         assertEquals(account.isDriver, accountResponse.isDriver)
         assertEquals(account.carPlate, accountResponse.carPlate)
+    }
+
+    @Test
+    fun givenAnInvalidName_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        val client = createClient()
+        val account = Account(
+            name = "John",
+            cpf = "17463269051",
+            email = "john.doe${Math.random()}@gmail.com",
+            isPassenger = true,
+            password = "123456"
+        )
+        val response = client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(account)
+        }.apply {
+            assertEquals(HttpStatusCode.UnprocessableEntity, status)
+        }.bodyAsText()
+        assertEquals(response, "-3")
     }
 }
