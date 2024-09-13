@@ -69,8 +69,8 @@ fun Application.module() {
                 var response: Response? = null
                 var result = 0
                 val id = java.util.UUID.randomUUID().toString()
-                val statement = conn.prepareStatement("SELECT account_id FROM ccca.account WHERE account_id = ?")
-                statement.setObject(1, idToPgObject(id))
+                val statement = conn.prepareStatement("SELECT account_id FROM ccca.account WHERE email = ?")
+                statement.setString(1, input.email)
                 val resultSet = statement.executeQuery()
                 if (!resultSet.next()) {
                     if (input.name.matches(Regex("^[a-zA-Z]+ [a-zA-Z]+$"))) {
