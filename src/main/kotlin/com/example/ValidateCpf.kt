@@ -28,5 +28,5 @@ fun validateCpf(cpf: String): Boolean {
     if (allDigitsAreEqual(cpfDigits)) return false
     val digit1 = calculateDigit(cpfDigits, FIRST_DIGIT_FACTOR)
     val digit2 = calculateDigit(cpfDigits, SECOND_DIGIT_FACTOR)
-    return "$digit1$digit2" == extractDigit(cpf)
+    return "$digit1$digit2" == extractDigit(cpfDigits)
 }
