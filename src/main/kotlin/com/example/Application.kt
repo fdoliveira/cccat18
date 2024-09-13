@@ -5,6 +5,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.serialization.SerialName
@@ -31,8 +32,8 @@ data class Response(val accountId: String)
 
 fun idToPgObject(uuid: String): PGobject {
     val objectUuid = PGobject()
-    objectUuid.setType("uuid");
-    objectUuid.setValue(uuid);
+    objectUuid.setType("uuid")
+    objectUuid.setValue(uuid)
     return objectUuid
 }
 
@@ -40,6 +41,12 @@ fun Application.module() {
     configureSerialization()
 
     routing {
+        get("/") {
+            call.respond(
+                message = "Curso Clean Code e Clean Architect - Turma 18 - Branas.io",
+                status = HttpStatusCode.OK
+            )
+        }
         post("/signup") {
             val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
             val input = call.receive<Account>()
