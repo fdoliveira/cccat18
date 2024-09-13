@@ -1,11 +1,11 @@
 meta {
-  name: Signup a non-Driver
+  name: Signup a Passenger
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
-  url: http://localhost:8080/signup
+  url: {{base_url}}/signup
   body: json
   auth: none
 }
@@ -15,6 +15,11 @@ body:json {
     "name": "Maria Betania",
     "email": "maria.betania@gmail.com",
     "cpf": "17463269051",
+    "is_passenger": true,
     "password": "123456"
   }
+}
+
+script:post-response {
+  bru.setEnvVar("passenger_account_id", res.body.account_id);
 }
