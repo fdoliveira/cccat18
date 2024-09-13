@@ -1,6 +1,5 @@
 package com.example
 
-import com.example.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -12,7 +11,7 @@ class ApplicationTest {
     fun testRoot() = testApplication {
         client.get("/").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
+            assertEquals("Curso Clean Code e Clean Architect - Turma 18 - Branas.io", bodyAsText())
         }
     }
 }
