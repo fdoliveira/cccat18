@@ -1,5 +1,6 @@
 .env
 .gradle
+.kotlin
 .DS_Store
 build/
 logs/
