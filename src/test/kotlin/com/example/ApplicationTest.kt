@@ -116,4 +116,23 @@ class ApplicationTest {
         }.bodyAsText()
         assertEquals(response, "-3")
     }
+
+    @Test
+    fun givenAnInvalidEmail_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        val client = createClient()
+        val account = Account(
+            name = "John Doe",
+            cpf = "17463269051",
+            email = "john.doe${Math.random()}",
+            isPassenger = true,
+            password = "123456"
+        )
+        val response = client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(account)
+        }.apply {
+            assertEquals(HttpStatusCode.UnprocessableEntity, status)
+        }.bodyAsText()
+        assertEquals(response, "-2")
+    }
 }
