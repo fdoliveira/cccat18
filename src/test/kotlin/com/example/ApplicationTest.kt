@@ -154,4 +154,30 @@ class ApplicationTest {
         }.bodyAsText()
         assertEquals(response, "-1")
     }
+
+    @Test
+    fun givenDuplicateEmail_whenCallSignUp_thenReturnUnprocessableEntity() = testApplication {
+        val client = createClient()
+        val account = Account(
+            name = "John Doe",
+            cpf = "17463269051",
+            email = "john.doe${Math.random()}@gmail.com",
+            isPassenger = true,
+            password = "123456"
+        )
+        client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(account)
+        }.apply {
+            assertEquals(HttpStatusCode.Created, status)
+        }
+
+        val errorResponse = client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(account)
+        }.apply {
+            assertEquals(HttpStatusCode.UnprocessableEntity, status)
+        }.bodyAsText()
+        assertEquals(errorResponse, "-4")
+    }
 }
