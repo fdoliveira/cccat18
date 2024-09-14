@@ -16,7 +16,7 @@ class AccountDAOMemory(
 
     override fun saveAccount(account: Account): String {
         val id = UUID.randomUUID().toString()
-        accounts[id] = account
+        accounts[id] = account.copy(accountId = id)
         return id
     }
 }
