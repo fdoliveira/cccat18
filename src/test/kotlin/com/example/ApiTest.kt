@@ -11,7 +11,7 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.test.*
 
-class ApplicationTest {
+class ApiTest {
 
     @OptIn(ExperimentalSerializationApi::class)
     private fun ApplicationTestBuilder.createClient(): HttpClient {
@@ -41,6 +41,7 @@ class ApplicationTest {
 
     @Test
     fun givenValidPassenger_whenCallSignUp_thenCreatePassenger() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -49,12 +50,14 @@ class ApplicationTest {
             isPassenger = true,
             password = "123456"
         )
+        // when
         val response: Response = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.Created, status)
         }.body()
+        // then
         assertNotNull(response.accountId)
         val accountResponse = client.get("/accounts/${response.accountId}").apply {
             assertEquals(HttpStatusCode.OK, status)
@@ -70,6 +73,7 @@ class ApplicationTest {
 
     @Test
     fun givenValidDriver_whenCallSignUp_thenCreateDriver() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -79,12 +83,14 @@ class ApplicationTest {
             carPlate = "ABC1234",
             password = "123456"
         )
+        // when
         val response: Response = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.Created, status)
         }.body()
+        // then
         assertNotNull(response.accountId)
         val accountResponse = client.get("/accounts/${response.accountId}").apply {
             assertEquals(HttpStatusCode.OK, status)
@@ -100,6 +106,7 @@ class ApplicationTest {
 
     @Test
     fun givenAnInvalidName_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John",
@@ -108,17 +115,20 @@ class ApplicationTest {
             isPassenger = true,
             password = "123456"
         )
+        // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
-        assertEquals(response, "-3")
+        // then
+        assertEquals(response, "Invalid name")
     }
 
     @Test
     fun givenAnInvalidEmail_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -127,17 +137,20 @@ class ApplicationTest {
             isPassenger = true,
             password = "123456"
         )
+        // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
-        assertEquals(response, "-2")
+        // then
+        assertEquals(response, "Invalid email")
     }
 
     @Test
     fun givenAnInvalidCpf_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -146,17 +159,20 @@ class ApplicationTest {
             isPassenger = true,
             password = "123456"
         )
+        // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
-        assertEquals(response, "-1")
+        // then
+        assertEquals(response, "Invalid cpf")
     }
 
     @Test
     fun givenDuplicateEmail_whenCallSignUp_thenReturnUnprocessableEntity() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -165,24 +181,26 @@ class ApplicationTest {
             isPassenger = true,
             password = "123456"
         )
+        // when
         client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.Created, status)
         }
-
         val errorResponse = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
-        assertEquals(errorResponse, "-4")
+        // then
+        assertEquals(errorResponse, "Duplicated account")
     }
 
     @Test
     fun givenAnInvalidCarPlate_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
+        // given
         val client = createClient()
         val account = Account(
             name = "John Doe",
@@ -192,13 +210,15 @@ class ApplicationTest {
             carPlate = "1BC123",
             password = "123456"
         )
+        // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
-        assertEquals(response, "-5")
+        // then
+        assertEquals(response, "Invalid car plate")
     }
 
 }
