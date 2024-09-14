@@ -19,8 +19,9 @@ fun Application.configureRouting() {
         }
         post("/signup") {
             val input = call.receive<Account>()
+            val signup = Signup(AccountDAOPgsql())
             try {
-                val response = signup(input)
+                val response = signup.execute(input)
                 call.respond(
                     message = response,
                     status = HttpStatusCode.Created
@@ -35,6 +36,7 @@ fun Application.configureRouting() {
         }
         get("/accounts/{accountId}") {
             val accountId = call.parameters["accountId"]
+            val getAccount = GetAccount(AccountDAOPgsql())
             if (accountId == null) {
                 call.respond(
                     message = "Account not found",
@@ -42,7 +44,7 @@ fun Application.configureRouting() {
                 )
                 return@get
             }
-            val account = getAccount(accountId)
+            val account = getAccount.execute(accountId)
             call.respond(
                 message = account,
                 status = HttpStatusCode.OK

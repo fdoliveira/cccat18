@@ -1,9 +1,16 @@
 package com.example
 
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class SignupTest {
+    private lateinit var signup: Signup
+
+    @BeforeTest
+    fun setup() {
+        signup = Signup(AccountDAOMemory())
+    }
 
     @Test
     fun givenValidAccount_whenCallSignup_thenCreateAccount() {
@@ -16,7 +23,7 @@ class SignupTest {
             password = "123456"
         )
         // when
-        val response = signup(account)
+        val response = signup.execute(account)
         // then
         assert(response.accountId.isNotEmpty())
     }
@@ -33,7 +40,7 @@ class SignupTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup(account)
+            signup.execute(account)
         }
         // then
         assert(exception.message == "Invalid name")
@@ -51,7 +58,7 @@ class SignupTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup(account)
+            signup.execute(account)
         }
         // then
         assert(exception.message == "Invalid email")
@@ -69,7 +76,7 @@ class SignupTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup(account)
+            signup.execute(account)
         }
         // then
         assert(exception.message == "Invalid cpf")
@@ -88,7 +95,7 @@ class SignupTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup(account)
+            signup.execute(account)
         }
         // then
         assert(exception.message == "Invalid car plate")
