@@ -19,7 +19,7 @@ fun Application.configureRouting() {
         }
         post("/signup") {
             val input = call.receive<Account>()
-            val signup = Signup(AccountDAOPgsql())
+            val signup = Signup(AccountDAOPgsql(), MailerGatewayMemory())
             try {
                 val response = signup.execute(input)
                 call.respond(

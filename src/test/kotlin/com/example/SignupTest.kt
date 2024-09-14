@@ -9,7 +9,7 @@ class SignupTest {
 
     @BeforeTest
     fun setup() {
-        signup = Signup(AccountDAOMemory())
+        signup = Signup(AccountDAOMemory(), MailerGatewayMemory())
     }
 
     @Test
