@@ -67,59 +67,38 @@ fun Application.module() {
             val input = call.receive<Account>()
             try {
                 var response: Response? = null
-                var result = 0
                 val id = java.util.UUID.randomUUID().toString()
                 val statement = conn.prepareStatement("SELECT account_id FROM ccca.account WHERE email = ?")
                 statement.setString(1, input.email)
-                val resultSet = statement.executeQuery()
-                if (!resultSet.next()) {
-                    if (input.name.matches(Regex("^[a-zA-Z]+ [a-zA-Z]+$"))) {
-                        if (input.email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))) {
-                            if (validateCpf(input.cpf)) {
-                                if (input.isDriver == true && input.carPlate != null) {
-                                    if (input.carPlate.matches(Regex("^[A-Z]{3}[0-9]{4}$"))) {
-                                        val stmt =
-                                            conn.prepareStatement("INSERT INTO ccca.account (account_id, name, email, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-                                        setInsertStmtParams(stmt, idToPgObject(id), input)
-                                        stmt.executeUpdate()
-                                        response = Response(id)
-                                    } else {
-                                        // invalid car plate
-                                        result = -5
-                                    }
-                                } else {
-                                    val stmt = conn.prepareStatement("INSERT INTO ccca.account (account_id, name, email, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-                                    setInsertStmtParams(stmt, idToPgObject(id), input)
-                                    stmt.executeUpdate()
-                                    response = Response(id)
-                                }
-                            } else {
-                                // invalid cpf
-                                result = -1
-                            }
-                        } else {
-                            // invalid email
-                            result = -2
-                        }
-                    } else {
-                        // invalid name
-                        result = -3
-                    }
-                } else {
-                    // already exists
-                    result = -4
+                val accountData = statement.executeQuery()
+                if (accountData.next()) {
+                    call.respond(message = -4, status = HttpStatusCode.UnprocessableEntity)
+                    return@post
                 }
-                if (response != null) {
-                    call.respond(
-                        message = response,
-                        status = HttpStatusCode.Created
-                    )
-                } else {
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.UnprocessableEntity
-                    )
+                if (!input.name.matches(Regex("^[a-zA-Z]+ [a-zA-Z]+$"))) {
+                    call.respond(message = -3, status = HttpStatusCode.UnprocessableEntity)
+                    return@post
                 }
+                if (!input.email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))) {
+                    call.respond(message = -2, status = HttpStatusCode.UnprocessableEntity)
+                    return@post
+                }
+                if (!validateCpf(input.cpf)) {
+                    call.respond(message = -1, status = HttpStatusCode.UnprocessableEntity)
+                    return@post
+                }
+                if (input.isDriver == true && (input.carPlate == null || (!input.carPlate.matches(Regex("^[A-Z]{3}[0-9]{4}$"))))) {
+                    call.respond(message = -5, status = HttpStatusCode.UnprocessableEntity)
+                    return@post
+                }
+                val stmt = conn.prepareStatement("INSERT INTO ccca.account (account_id, name, email, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+                setInsertStmtParams(stmt, idToPgObject(id), input)
+                stmt.executeUpdate()
+                response = Response(id)
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.Created
+                )
             } finally {
                 conn.close()
             }
