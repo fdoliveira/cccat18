@@ -16,14 +16,15 @@ create table ccca.account(
 create table ccca.ride(
 	ride_id uuid primary key,
 	passenger_id uuid not null,
-    from_lat double precision not null,
-	from_long double precision not null,
-    to_lat double precision not null,
-	to_long double precision not null,
-    status text not null,
     driver_id uuid null,
-    created_at timestamp not null default now(),
-    updated_at timestamp not null default now(),
+    status text not null,
+    fare numeric null,
+    distance numeric null,
+    from_lat numeric not null,
+	from_long numeric not null,
+    to_lat numeric not null,
+	to_long numeric not null,
+    date timestamp not null,
     foreign key (passenger_id) references ccca.account(account_id),
     foreign key (driver_id) references ccca.account(account_id)
 );
