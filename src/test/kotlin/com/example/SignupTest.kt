@@ -13,7 +13,7 @@ class SignupTest {
     }
 
     @Test
-    fun givenValidAccount_whenCallSignup_thenCreateAccount() {
+    fun givenValidPassenger_whenCallSignup_thenCreateAccount() {
         // given
         val account = Account(
             name = "John Doe",
@@ -29,7 +29,7 @@ class SignupTest {
     }
 
     @Test
-    fun givenAnInvalidName_whenCallSignup_thenReturnInvalidNameException() {
+    fun givenPassengerWithAnInvalidName_whenCallSignup_thenReturnInvalidNameException() {
         // given
         val account = Account(
             name = "John",
@@ -47,7 +47,7 @@ class SignupTest {
     }
 
     @Test
-    fun givenAnInvalidEmail_whenCallSignup_thenReturnInvalidEmailException() {
+    fun givenPassengerWithAnInvalidEmail_whenCallSignup_thenReturnInvalidEmailException() {
         // given
         val account = Account(
             name = "John Doe",
@@ -65,7 +65,7 @@ class SignupTest {
     }
 
     @Test
-    fun givenAnInvalidCpf_whenCallSignup_thenReturnInvalidCpfException() {
+    fun givenPassengerWithAnInvalidCpf_whenCallSignup_thenReturnInvalidCpfException() {
         // given
         val account = Account(
             name = "John Doe",
@@ -83,7 +83,7 @@ class SignupTest {
     }
 
     @Test
-    fun givenAnInvalidCarPlate_whenCallSignup_thenReturnInvalidCarPlateException() {
+    fun givenDriverWithAnInvalidCarPlate_whenCallSignup_thenReturnInvalidCarPlateException() {
         //given
         val account = Account(
             name = "John Doe",
@@ -99,5 +99,37 @@ class SignupTest {
         }
         // then
         assert(exception.message == "Invalid car plate")
+    }
+
+    @Test
+    fun givenValidPassenger_whenCallSignup_thenCreateAccountWithStub() {
+        // TODO: Implement test with stub
+    }
+
+    @Test
+    fun givenValidPassenger_whenCallSignup_thenCreateAccountWithSpy() {
+        // TODO: Implement test with spy
+    }
+
+    @Test
+    fun givenValidPassenger_whenCallSignup_thenCreateAccountWithMock() {
+        // TODO: Implement test with mock
+
+//        val mailerMock = mockk<MailerGatewayMemory>()
+//        val accountMock = mockk<AccountDAOMemory>()
+//        val signupMock = Signup(accountMock, mailerMock)
+//        // given
+//        val account = Account(
+//            name = "John Doe",
+//            cpf = "17463269051",
+//            email = "john.doe${Math.random()}@gmail.com",
+//            isPassenger = true,
+//            password = "123456"
+//        )
+//        // when
+//        val response = signupMock.execute(account)
+//        // then
+//        assert(response.accountId.isNotEmpty())
+//        verify(exactly = 1) { mailerMock.send(account.email, "Welcome!", "...") }
     }
 }

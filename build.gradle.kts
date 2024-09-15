@@ -3,6 +3,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val postgres_version: String by project
 val h2_version: String by project
+val mockk_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -37,4 +38,5 @@ dependencies {
     testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("com.h2database:h2:$h2_version")
+    testImplementation("io.mockk:mockk:${mockk_version}")
 }
