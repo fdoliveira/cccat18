@@ -4,6 +4,7 @@ val logback_version: String by project
 val postgres_version: String by project
 val h2_version: String by project
 val mockk_version: String by project
+val kotlinx_datetime_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -33,6 +34,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-config-yaml")
+    // kotlinx-datetime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
