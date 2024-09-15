@@ -51,7 +51,7 @@ class ApiTest {
             password = "123456"
         )
         // when
-        val response: Response = client.post("/signup") {
+        val response: AccountResponse = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {
@@ -84,7 +84,7 @@ class ApiTest {
             password = "123456"
         )
         // when
-        val response: Response = client.post("/signup") {
+        val response: AccountResponse = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(account)
         }.apply {

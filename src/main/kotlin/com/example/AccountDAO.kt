@@ -16,7 +16,7 @@ data class Account(
 )
 
 @Serializable
-data class Response(@SerialName("account_id") val accountId: String)
+data class AccountResponse(@SerialName("account_id") val accountId: String)
 
 interface AccountDAO {
     fun getAccountById(accountId: String): Account?
