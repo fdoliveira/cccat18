@@ -24,5 +24,7 @@ data class RideResponse(@SerialName("ride_id") val rideId: String)
 
 interface RideDAO {
     fun getRideById(rideId: String): Ride?
+    fun getUncompletedRideByPassengerId(passengerId: String): Ride?
     fun saveRide(ride: Ride): String
+
 }
