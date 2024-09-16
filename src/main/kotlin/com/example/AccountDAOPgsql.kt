@@ -1,19 +1,12 @@
 package com.example
 
-import org.postgresql.util.PGobject
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 
 class AccountDAOPgsql : AccountDAO {
-    fun idToPgObject(uuid: String): PGobject {
-        val objectUuid = PGobject()
-        objectUuid.setType("uuid")
-        objectUuid.setValue(uuid)
-        return objectUuid
-    }
-
-    fun setInsertStmtParams(stmt: PreparedStatement, id: PGobject, account: Account) {
-        stmt.setObject(1, id)
+    private fun setInsertStmtParams(stmt: PreparedStatement, account: Account): String {
+        val id = java.util.UUID.randomUUID().toString()
+        stmt.setObject(1, idToPgObject(id))
         stmt.setString(2, account.name)
         stmt.setString(3, account.email)
         stmt.setString(4, account.cpf)
@@ -21,6 +14,7 @@ class AccountDAOPgsql : AccountDAO {
         stmt.setBoolean(6, account.isDriver)
         stmt.setString(7, account.carPlate)
         stmt.setString(8, account.password)
+        return id
     }
 
     override fun getAccountById(accountId: String): Account? {
@@ -74,9 +68,8 @@ class AccountDAOPgsql : AccountDAO {
     override fun saveAccount(account: Account): String {
         val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
         try {
-            val id = java.util.UUID.randomUUID().toString()
             val stmt = conn.prepareStatement("INSERT INTO ccca.account (account_id, name, email, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-            setInsertStmtParams(stmt, idToPgObject(id), account)
+            val id = setInsertStmtParams(stmt, account)
             stmt.executeUpdate()
             return id
         } finally {
