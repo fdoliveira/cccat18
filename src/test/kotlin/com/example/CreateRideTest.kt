@@ -1,5 +1,15 @@
 package com.example
 
+import com.example.app.usecase.CreateRide
+import com.example.app.usecase.GetRide
+import com.example.app.usecase.Signup
+import com.example.infra.account.model.AccountRequest
+import com.example.infra.gateway.MailerGatewayMemory
+import com.example.infra.repository.AccountDAO
+import com.example.infra.repository.AccountDAOPgsql
+import com.example.infra.repository.RideDAO
+import com.example.infra.repository.RideDAOPgsql
+import com.example.infra.ride.model.RideRequest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,8 +23,8 @@ class CreateRideTest {
 
     @BeforeTest
     fun setup() {
-        rideDAO = RideDAOMemory()
-        accountDAO = AccountDAOMemory()
+        rideDAO = RideDAOPgsql()
+        accountDAO = AccountDAOPgsql()
         getRide = GetRide(rideDAO)
         createRide = CreateRide(rideDAO, accountDAO)
     }
@@ -22,22 +32,22 @@ class CreateRideTest {
     @Test
     fun givenValidRide_whenCallCreateRide_thenCreateRide() {
         // given
-        val account = Account(
+        val accountRequest = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
             isPassenger = true,
             password = "123456"
         )
-        val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(account)
-        val ride = Ride(
+        val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(accountRequest)
+        val rideRequest = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
             fromLong = -36.970218,
             toLat = -6.4599549,
             toLong = -37.0937225,
         )
-        val response = createRide.execute(ride)
+        val response = createRide.execute(rideRequest)
         // then
         assert(response.rideId.isNotEmpty())
     }
@@ -45,7 +55,7 @@ class CreateRideTest {
     @Test
     fun givenRideWithDriver_whenCallCreateRide_thenReturnNotPassengerException() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -54,7 +64,7 @@ class CreateRideTest {
             password = "123456"
         )
         val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(account)
-        val ride = Ride(
+        val ride = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
             fromLong = -36.970218,
@@ -72,7 +82,7 @@ class CreateRideTest {
     @Test
     fun givenRideWithPassengerWithRideInProgress_whenCallCreateRide_thenReturnPassengerWithRideInProgressException() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -81,7 +91,7 @@ class CreateRideTest {
             password = "123456"
         )
         val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(account)
-        val ride = Ride(
+        val ride = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
             fromLong = -36.970218,

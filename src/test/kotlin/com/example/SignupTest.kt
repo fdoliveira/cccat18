@@ -1,5 +1,9 @@
 package com.example
 
+import com.example.app.usecase.Signup
+import com.example.infra.account.model.AccountRequest
+import com.example.infra.gateway.MailerGatewayMemory
+import com.example.infra.repository.AccountDAOPgsql
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -9,13 +13,13 @@ class SignupTest {
 
     @BeforeTest
     fun setup() {
-        signup = Signup(AccountDAOMemory(), MailerGatewayMemory())
+        signup = Signup(AccountDAOPgsql(), MailerGatewayMemory())
     }
 
     @Test
     fun givenValidPassenger_whenCallSignup_thenCreateAccount() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -31,7 +35,7 @@ class SignupTest {
     @Test
     fun givenPassengerWithAnInvalidName_whenCallSignup_thenReturnInvalidNameException() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -49,7 +53,7 @@ class SignupTest {
     @Test
     fun givenPassengerWithAnInvalidEmail_whenCallSignup_thenReturnInvalidEmailException() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}",
@@ -67,7 +71,7 @@ class SignupTest {
     @Test
     fun givenPassengerWithAnInvalidCpf_whenCallSignup_thenReturnInvalidCpfException() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "1746326905",
             email = "john.doe${Math.random()}@gmail.com",
@@ -85,7 +89,7 @@ class SignupTest {
     @Test
     fun givenDriverWithAnInvalidCarPlate_whenCallSignup_thenReturnInvalidCarPlateException() {
         //given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",

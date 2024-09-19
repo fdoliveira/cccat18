@@ -1,5 +1,8 @@
-package com.example
+package com.example.infra.repository
 
+import com.example.domain.Ride
+import com.example.infra.database.getKotlinxLocalDateTime
+import com.example.infra.database.uuidToPgObject
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -7,34 +10,28 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.sql.DriverManager
 import java.sql.PreparedStatement
-import java.util.UUID
 
 class RideDAOPgsql : RideDAO {
     private fun setInsertStmtParams(stmt: PreparedStatement, rideFromBody: Ride): String {
-        val id = UUID.randomUUID().toString()
         val status = "requested"
         val currentMoment: Instant = Clock.System.now()
         val dateTime : LocalDateTime = currentMoment.toLocalDateTime(TimeZone.UTC)
-        val ride = rideFromBody.copy(rideId = id, status = status, date = dateTime)
-        stmt.setObject(1, idToPgObject(ride.rideId!!))
-        stmt.setString(2, ride.passengerId)
-        if (ride.driverId == null) stmt.setNull(3, java.sql.Types.OTHER) else stmt.setObject(3, ride.driverId)
-        stmt.setString(4, ride.status)
-        if (ride.fare == null) stmt.setNull(5, java.sql.Types.DOUBLE) else stmt.setDouble(5, ride.fare)
-        if (ride.distance == null) stmt.setNull(6, java.sql.Types.DOUBLE) else stmt.setDouble(6, ride.distance)
-        stmt.setDouble(7, ride.fromLat)
-        stmt.setDouble(8, ride.fromLong)
-        stmt.setDouble(9, ride.toLat)
-        stmt.setDouble(10, ride.toLong)
-        stmt.setObject(11, ride.date)
-        return id
+        val ride = rideFromBody.from(status = status, date = dateTime)
+        stmt.setObject(1, uuidToPgObject(ride.getRideId()!!))
+        stmt.setObject(2, uuidToPgObject(ride.getPassengerId()))
+        stmt.setString(3, ride.getStatus())
+        stmt.setDouble(4, ride.getFromLat())
+        stmt.setDouble(5, ride.getFromLong())
+        stmt.setDouble(6, ride.getToLat())
+        stmt.setDouble(7, ride.getToLong())
+        return ride.getRideId()!!
     }
 
     override fun getRideById(rideId: String): Ride? {
         val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
         try {
             val statement = conn.prepareStatement("SELECT ride_id, passenger_id, driver_id, status, fare, distance, from_lat, from_long, to_lat, to_long, date FROM ccca.ride WHERE ride_id = ?")
-            statement.setObject(1, idToPgObject(rideId))
+            statement.setObject(1, uuidToPgObject(rideId))
             val resultSet = statement.executeQuery()
             if (resultSet.next()) {
                 return Ride(
@@ -48,7 +45,7 @@ class RideDAOPgsql : RideDAO {
                     fromLong = resultSet.getDouble("from_long"),
                     toLat = resultSet.getDouble("to_lat"),
                     toLong = resultSet.getDouble("to_long"),
-                    date = resultSet.getObject("date", LocalDateTime::class.java)
+                    date = resultSet.getKotlinxLocalDateTime("date")
                 )
             }
             return null
@@ -61,7 +58,7 @@ class RideDAOPgsql : RideDAO {
         val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
         try {
             val statement = conn.prepareStatement("SELECT ride_id, passenger_id, driver_id, status, fare, distance, from_lat, from_long, to_lat, to_long, date FROM ccca.ride WHERE passenger_id = ? AND status != 'completed'")
-            statement.setObject(1, idToPgObject(passengerId))
+            statement.setObject(1, uuidToPgObject(passengerId))
             val resultSet = statement.executeQuery()
             if (resultSet.next()) {
                 return Ride(
@@ -87,7 +84,7 @@ class RideDAOPgsql : RideDAO {
     override fun saveRide(ride: Ride): String {
         val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
         try {
-            val stmt = conn.prepareStatement("INSERT INTO ccca.ride(ride_id, passenger_id, driver_id, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+            val stmt = conn.prepareStatement("INSERT INTO ccca.ride(ride_id, passenger_id, status, from_lat, from_long, to_lat, to_long, date) VALUES (?, ?, ?, ?, ?, ?, ?, now())")
             val id = setInsertStmtParams(stmt, ride)
             stmt.executeUpdate()
             return id

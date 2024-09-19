@@ -1,10 +1,17 @@
 package com.example
 
+import com.example.app.usecase.GetAccount
+import com.example.app.usecase.Signup
+import com.example.infra.account.model.AccountRequest
+import com.example.infra.gateway.MailerGatewayMemory
+import com.example.infra.repository.AccountDAO
+import com.example.infra.repository.AccountDAOPgsql
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class GetAccountTest {
@@ -14,7 +21,7 @@ class GetAccountTest {
 
     @BeforeTest
     fun setup() {
-        accountDAO = AccountDAOMemory()
+        accountDAO = AccountDAOPgsql()
         signup = Signup(accountDAO, MailerGatewayMemory())
         getAccount = GetAccount(accountDAO)
     }
@@ -22,25 +29,25 @@ class GetAccountTest {
     @Test
     fun givenValidAccountId_whenCallGetAccount_thenReturnSavedAccount() {
         // given
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
             isPassenger = true,
             password = "123456"
         )
-        val response = signup.execute(account)
+        val response = signup.execute(expectedAccount)
         val accountId = response.accountId
         // when
         val savedAccount = getAccount.execute(accountId)
         // then
-        assertEquals(savedAccount.accountId, accountId)
-        assertEquals(savedAccount.name, account.name)
-        assertEquals(savedAccount.email, account.email)
-        assertEquals(savedAccount.cpf, account.cpf)
-        assertEquals(savedAccount.isPassenger, account.isPassenger)
-        assertEquals(savedAccount.isDriver, account.isDriver)
-        assertEquals(savedAccount.carPlate, account.carPlate)
+        assertEquals(savedAccount.getAccountId(), accountId)
+        assertEquals(savedAccount.getName(), expectedAccount.name)
+        assertEquals(savedAccount.getEmail(), expectedAccount.email)
+        assertEquals(savedAccount.getCPF(), expectedAccount.cpf)
+        assertEquals(savedAccount.isPassenger(), true)
+        assertEquals(savedAccount.isDriver(), false)
+        assertNull(savedAccount.getCarPlate())
     }
 
     @Test

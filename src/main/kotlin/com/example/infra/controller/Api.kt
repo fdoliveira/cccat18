@@ -1,5 +1,16 @@
-package com.example
+package com.example.infra.controller
 
+import com.example.app.usecase.CreateRide
+import com.example.app.usecase.GetAccount
+import com.example.app.usecase.GetRide
+import com.example.app.usecase.Signup
+import com.example.infra.account.model.AccountRequest
+import com.example.infra.account.model.GetAccountResponse
+import com.example.infra.gateway.MailerGatewayMemory
+import com.example.infra.repository.AccountDAOPgsql
+import com.example.infra.repository.RideDAOPgsql
+import com.example.infra.ride.model.GetRideResponse
+import com.example.infra.ride.model.RideRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -28,13 +39,14 @@ fun Application.configureRouting() {
                 return@get
             }
             val account = getAccount.execute(accountId)
+            val accountResponse = GetAccountResponse.from(account)
             call.respond(
-                message = account,
+                message = accountResponse,
                 status = HttpStatusCode.OK
             )
         }
         post("/signup") {
-            val input = call.receive<Account>()
+            val input = call.receive<AccountRequest>()
             val signup = Signup(AccountDAOPgsql(), MailerGatewayMemory())
             try {
                 val response = signup.execute(input)
@@ -61,13 +73,14 @@ fun Application.configureRouting() {
                 return@get
             }
             val ride = getRide.execute(rideId)
+            val rideResponse = GetRideResponse.from(ride)
             call.respond(
-                message = ride,
+                message = rideResponse,
                 status = HttpStatusCode.OK
             )
         }
         post("/rides") {
-            val input = call.receive<Ride>()
+            val input = call.receive<RideRequest>()
             val ride = CreateRide(RideDAOPgsql(), AccountDAOPgsql())
             try {
                 val response = ride.execute(input)

@@ -1,5 +1,8 @@
 package com.example
 
+import com.example.infra.account.model.CreateAccountResponse
+import com.example.infra.account.model.AccountRequest
+import com.example.infra.account.model.GetAccountResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -43,7 +46,7 @@ class ApiTest {
     fun givenValidPassenger_whenCallSignUp_thenCreatePassenger() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -51,9 +54,9 @@ class ApiTest {
             password = "123456"
         )
         // when
-        val response: AccountResponse = client.post("/signup") {
+        val response: CreateAccountResponse = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.Created, status)
         }.body()
@@ -61,21 +64,21 @@ class ApiTest {
         assertNotNull(response.accountId)
         val accountResponse = client.get("/accounts/${response.accountId}").apply {
             assertEquals(HttpStatusCode.OK, status)
-        }.body<Account>()
+        }.body<GetAccountResponse>()
         assertEquals(response.accountId, accountResponse.accountId)
-        assertEquals(account.name, accountResponse.name)
-        assertEquals(account.email, accountResponse.email)
-        assertEquals(account.cpf, accountResponse.cpf)
-        assertEquals(account.isPassenger, accountResponse.isPassenger)
-        assertEquals(account.isDriver, accountResponse.isDriver)
-        assertEquals(account.carPlate, accountResponse.carPlate)
+        assertEquals(expectedAccount.name, accountResponse.name)
+        assertEquals(expectedAccount.email, accountResponse.email)
+        assertEquals(expectedAccount.cpf, accountResponse.cpf)
+        assertEquals(expectedAccount.isPassenger, accountResponse.isPassenger)
+        assertEquals(false, accountResponse.isDriver)
+        assertNull(accountResponse.carPlate)
     }
 
     @Test
     fun givenValidDriver_whenCallSignUp_thenCreateDriver() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -84,9 +87,9 @@ class ApiTest {
             password = "123456"
         )
         // when
-        val response: AccountResponse = client.post("/signup") {
+        val response: CreateAccountResponse = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.Created, status)
         }.body()
@@ -94,21 +97,21 @@ class ApiTest {
         assertNotNull(response.accountId)
         val accountResponse = client.get("/accounts/${response.accountId}").apply {
             assertEquals(HttpStatusCode.OK, status)
-        }.body<Account>()
+        }.body<GetAccountResponse>()
         assertEquals(response.accountId, accountResponse.accountId)
-        assertEquals(account.name, accountResponse.name)
-        assertEquals(account.email, accountResponse.email)
-        assertEquals(account.cpf, accountResponse.cpf)
-        assertEquals(account.isPassenger, accountResponse.isPassenger)
-        assertEquals(account.isDriver, accountResponse.isDriver)
-        assertEquals(account.carPlate, accountResponse.carPlate)
+        assertEquals(expectedAccount.name, accountResponse.name)
+        assertEquals(expectedAccount.email, accountResponse.email)
+        assertEquals(expectedAccount.cpf, accountResponse.cpf)
+        assertEquals(false, accountResponse.isPassenger)
+        assertEquals(expectedAccount.isDriver, accountResponse.isDriver)
+        assertEquals(expectedAccount.carPlate, accountResponse.carPlate)
     }
 
     @Test
     fun givenAnInvalidName_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -118,7 +121,7 @@ class ApiTest {
         // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
@@ -130,7 +133,7 @@ class ApiTest {
     fun givenAnInvalidEmail_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}",
@@ -140,7 +143,7 @@ class ApiTest {
         // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
@@ -152,7 +155,7 @@ class ApiTest {
     fun givenAnInvalidCpf_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John Doe",
             cpf = "1746326905",
             email = "john.doe${Math.random()}@gmail.com",
@@ -162,7 +165,7 @@ class ApiTest {
         // when
         val response = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
@@ -174,7 +177,7 @@ class ApiTest {
     fun givenDuplicateEmail_whenCallSignUp_thenReturnUnprocessableEntity() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val expectedAccount = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -184,13 +187,13 @@ class ApiTest {
         // when
         client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.Created, status)
         }
         val errorResponse = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(account)
+            setBody(expectedAccount)
         }.apply {
             assertEquals(HttpStatusCode.UnprocessableEntity, status)
         }.bodyAsText()
@@ -202,7 +205,7 @@ class ApiTest {
     fun givenAnInvalidCarPlate_whenCallSignup_thenReturnUnprocessableEntity() = testApplication {
         // given
         val client = createClient()
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",

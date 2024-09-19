@@ -1,4 +1,4 @@
-package com.example
+package com.example.infra.gateway
 
 class MailerGatewayMemory: MailerGateway {
     override fun send(recipient: String, subject: String, message: String) {

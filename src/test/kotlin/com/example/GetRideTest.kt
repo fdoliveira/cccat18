@@ -1,5 +1,15 @@
 package com.example
 
+import com.example.app.usecase.CreateRide
+import com.example.app.usecase.GetRide
+import com.example.app.usecase.Signup
+import com.example.infra.account.model.AccountRequest
+import com.example.infra.gateway.MailerGatewayMemory
+import com.example.infra.repository.AccountDAO
+import com.example.infra.repository.AccountDAOPgsql
+import com.example.infra.repository.RideDAO
+import com.example.infra.repository.RideDAOPgsql
+import com.example.infra.ride.model.RideRequest
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -14,8 +24,8 @@ class GetRideTest {
 
     @BeforeTest
     fun setup() {
-        rideDAO = RideDAOMemory()
-        accountDAO = AccountDAOMemory()
+        rideDAO = RideDAOPgsql()
+        accountDAO = AccountDAOPgsql()
         getRide = GetRide(rideDAO)
         createRide = CreateRide(rideDAO, accountDAO)
     }
@@ -23,7 +33,7 @@ class GetRideTest {
     @Test
     fun givenValidRideId_whenCallGetRide_thenReturnSavedRide() {
         // given
-        val account = Account(
+        val account = AccountRequest(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -31,7 +41,7 @@ class GetRideTest {
             password = "123456"
         )
         val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(account)
-        val ride = Ride(
+        val ride = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
             fromLong = -36.970218,
@@ -43,9 +53,9 @@ class GetRideTest {
         // when
         val savedRide = getRide.execute(rideId)
         // then
-        assertEquals(savedRide.rideId, rideId)
-        assertEquals(savedRide.passengerId, ride.passengerId)
-        assertEquals(savedRide.status, "requested")
+        assertEquals(savedRide.getRideId(), rideId)
+        assertEquals(savedRide.getPassengerId(), ride.passengerId)
+        assertEquals(savedRide.getStatus(), "requested")
     }
 
     @Test

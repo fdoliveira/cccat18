@@ -1,27 +1,28 @@
-package com.example
+package com.example.infra.repository
 
+import com.example.domain.Account
+import com.example.infra.database.uuidToPgObject
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 
 class AccountDAOPgsql : AccountDAO {
     private fun setInsertStmtParams(stmt: PreparedStatement, account: Account): String {
-        val id = java.util.UUID.randomUUID().toString()
-        stmt.setObject(1, idToPgObject(id))
-        stmt.setString(2, account.name)
-        stmt.setString(3, account.email)
-        stmt.setString(4, account.cpf)
-        stmt.setBoolean(5, account.isPassenger)
-        stmt.setBoolean(6, account.isDriver)
-        stmt.setString(7, account.carPlate)
-        stmt.setString(8, account.password)
-        return id
+        stmt.setObject(1, uuidToPgObject(account.getAccountId()!!))
+        stmt.setString(2, account.getName())
+        stmt.setString(3, account.getEmail())
+        stmt.setString(4, account.getCPF())
+        stmt.setBoolean(5, account.isPassenger())
+        stmt.setBoolean(6, account.isDriver())
+        if (account.getCarPlate() == null) stmt.setNull(7, java.sql.Types.VARCHAR) else stmt.setString(7, account.getCarPlate())
+        stmt.setString(8, account.getPassword())
+        return account.getAccountId()!!
     }
 
     override fun getAccountById(accountId: String): Account? {
         val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
         try {
             val statement = conn.prepareStatement("SELECT account_id, name, email, cpf, is_passenger, is_driver, car_plate FROM ccca.account WHERE account_id = ?")
-            statement.setObject(1, idToPgObject(accountId))
+            statement.setObject(1, uuidToPgObject(accountId))
             val resultSet = statement.executeQuery()
             if (resultSet.next()) {
                 return Account(
@@ -68,7 +69,8 @@ class AccountDAOPgsql : AccountDAO {
     override fun saveAccount(account: Account): String {
         val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")
         try {
-            val stmt = conn.prepareStatement("INSERT INTO ccca.account (account_id, name, email, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+            val stmt =
+                conn.prepareStatement("INSERT INTO ccca.account (account_id, name, email, cpf, is_passenger, is_driver, car_plate, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
             val id = setInsertStmtParams(stmt, account)
             stmt.executeUpdate()
             return id
