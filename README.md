@@ -8,6 +8,31 @@ Branch `main` será atualizada conforme o andamento do curso.
 
 Branch `cccat18-1` primeira aula.
 
+    - Tecnicas de refactoring
+    - Code Smells
+    - TDD
+
 Branch `cccat18-2` segunda aula.
+
+    - SOLID-SRP
+    - Arquitetura Hexagonal
+    - SOLID-DIP
+    - DAO
+    - Testes automatizados
+    
+    Pendente:
+    - Testes Stub, Spy e Mock
+
+Branch `cccat18-3` terceira aula.
+
+    - Módulos usando pastas domain, app e infra.
+    - Domain Model
+    - Clean Architecture
+    - Repository
+    - Adicionado Injeção de Dependência usando Koin
+    
+    Pendente:
+    - Testes usando o banco de dados H2 em memória
+
 
 Para mais informações sobre o curso do Branas acesse: https://branas.io
