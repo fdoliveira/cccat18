@@ -3,10 +3,12 @@ package com.example
 import com.example.app.usecase.GetAccount
 import com.example.app.usecase.Signup
 import com.example.infra.account.model.AccountRequest
-import com.example.infra.gateway.MailerGatewayMemory
-import com.example.infra.repository.AccountDAO
-import com.example.infra.repository.AccountDAOPgsql
+import com.example.infra.di.repositoryModule
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.test.KoinTest
 import java.util.UUID
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,16 +16,23 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class GetAccountTest {
+class GetAccountTest: KoinTest {
     private lateinit var signup: Signup
     private lateinit var getAccount: GetAccount
-    private lateinit var accountDAO: AccountDAO
 
     @BeforeTest
     fun setup() {
-        accountDAO = AccountDAOPgsql()
-        signup = Signup(accountDAO, MailerGatewayMemory())
-        getAccount = GetAccount(accountDAO)
+        signup = Signup()
+        getAccount = GetAccount()
+        stopKoin() // to remove 'A Koin Application has already been started'
+        startKoin {
+            modules(repositoryModule)
+        }
+    }
+
+    @AfterTest
+    fun cleanUp() {
+        stopKoin()
     }
 
     @Test

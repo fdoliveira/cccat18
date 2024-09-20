@@ -1,10 +1,13 @@
 package com.example.app.usecase
 
-import com.example.infra.repository.AccountDAO
 import com.example.domain.Account
+import com.example.infra.repository.AccountRepository
+import com.example.infra.repository.AccountRepositoryDatabase
 
-class GetAccount(val accountDAO: AccountDAO) {
+class GetAccount {
+    private val accountRepository: AccountRepository by lazy { AccountRepositoryDatabase() }
+
     fun execute(accountId: String): Account {
-        return accountDAO.getAccountById(accountId) ?: throw Exception("Account not found")
+        return accountRepository.getAccountById(accountId) ?: throw Exception("Account not found")
     }
 }

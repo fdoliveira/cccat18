@@ -4,29 +4,34 @@ import com.example.app.usecase.CreateRide
 import com.example.app.usecase.GetRide
 import com.example.app.usecase.Signup
 import com.example.infra.account.model.AccountRequest
-import com.example.infra.gateway.MailerGatewayMemory
-import com.example.infra.repository.AccountDAO
-import com.example.infra.repository.AccountDAOPgsql
-import com.example.infra.repository.RideDAO
-import com.example.infra.repository.RideDAOPgsql
+import com.example.infra.di.repositoryModule
 import com.example.infra.ride.model.RideRequest
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.test.KoinTest
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class CreateRideTest {
-    private lateinit var rideDAO: RideDAO
-    private lateinit var accountDAO: AccountDAO
+class CreateRideTest: KoinTest {
     private lateinit var getRide: GetRide
     private lateinit var createRide: CreateRide
 
     @BeforeTest
     fun setup() {
-        rideDAO = RideDAOPgsql()
-        accountDAO = AccountDAOPgsql()
-        getRide = GetRide(rideDAO)
-        createRide = CreateRide(rideDAO, accountDAO)
+        getRide = GetRide()
+        createRide = CreateRide()
+        stopKoin() // to remove 'A Koin Application has already been started'
+        startKoin {
+            modules(repositoryModule)
+        }
+    }
+
+    @AfterTest
+    fun cleanUp() {
+        stopKoin()
     }
 
     @Test
@@ -39,7 +44,7 @@ class CreateRideTest {
             isPassenger = true,
             password = "123456"
         )
-        val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(accountRequest)
+        val accountResponse = Signup().execute(accountRequest)
         val rideRequest = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
@@ -63,7 +68,7 @@ class CreateRideTest {
             carPlate = "ABC1234",
             password = "123456"
         )
-        val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(account)
+        val accountResponse = Signup().execute(account)
         val ride = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
@@ -90,7 +95,7 @@ class CreateRideTest {
             carPlate = "ABC1234",
             password = "123456"
         )
-        val accountResponse = Signup(accountDAO, MailerGatewayMemory()).execute(account)
+        val accountResponse = Signup().execute(account)
         val ride = RideRequest(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,

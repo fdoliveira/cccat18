@@ -2,18 +2,30 @@ package com.example
 
 import com.example.app.usecase.Signup
 import com.example.infra.account.model.AccountRequest
-import com.example.infra.gateway.MailerGatewayMemory
-import com.example.infra.repository.AccountDAOPgsql
+import com.example.infra.di.repositoryModule
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.test.KoinTest
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
-class SignupTest {
+class SignupTest: KoinTest {
     private lateinit var signup: Signup
 
     @BeforeTest
     fun setup() {
-        signup = Signup(AccountDAOPgsql(), MailerGatewayMemory())
+        signup = Signup()
+        stopKoin() // to remove 'A Koin Application has already been started'
+        startKoin {
+            modules(repositoryModule)
+        }
+    }
+
+    @AfterTest
+    fun cleanUp() {
+        stopKoin()
     }
 
     @Test

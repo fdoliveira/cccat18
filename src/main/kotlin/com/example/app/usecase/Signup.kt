@@ -1,12 +1,17 @@
 package com.example.app.usecase
 
 import com.example.domain.Account
-import com.example.infra.repository.AccountDAO
-import com.example.infra.gateway.MailerGateway
 import com.example.infra.account.model.AccountRequest
 import com.example.infra.account.model.CreateAccountResponse
+import com.example.infra.gateway.MailerGateway
+import com.example.infra.gateway.MailerGatewayMemory
+import com.example.infra.repository.AccountRepository
+import com.example.infra.repository.AccountRepositoryDatabase
 
-class Signup(val accountDAO: AccountDAO, val mailerGateway: MailerGateway) {
+class Signup {
+    private val accountRepository: AccountRepository by lazy { AccountRepositoryDatabase() }
+    private val mailerGateway: MailerGateway by lazy { MailerGatewayMemory() }
+
     fun execute(input: AccountRequest): CreateAccountResponse {
         val account = Account.create(
             name = input.name,
@@ -17,8 +22,8 @@ class Signup(val accountDAO: AccountDAO, val mailerGateway: MailerGateway) {
             password = input.password,
             carPlate = input.carPlate
         )
-        accountDAO.getAccountByEmail(input.email)?.let { throw Exception("Duplicated account") }
-        val savedAccountId = accountDAO.saveAccount(account)
+        accountRepository.getAccountByEmail(input.email)?.let { throw Exception("Duplicated account") }
+        val savedAccountId = accountRepository.saveAccount(account)
         mailerGateway.send(input.email, "Welcome!", "...")
         return CreateAccountResponse(savedAccountId)
     }

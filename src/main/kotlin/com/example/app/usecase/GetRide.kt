@@ -1,10 +1,13 @@
 package com.example.app.usecase
 
 import com.example.domain.Ride
-import com.example.infra.repository.RideDAO
+import com.example.infra.repository.RideRepository
+import com.example.infra.repository.RideRepositoryDatabase
 
-class GetRide(val rideDAO: RideDAO) {
+class GetRide {
+    private val rideRepository: RideRepository by lazy { RideRepositoryDatabase() }
+
     fun execute(rideId: String): Ride {
-        return rideDAO.getRideById(rideId) ?: throw Exception("Ride not found")
+        return rideRepository.getRideById(rideId) ?: throw Exception("Ride not found")
     }
 }
