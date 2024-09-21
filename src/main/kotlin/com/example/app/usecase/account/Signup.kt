@@ -1,4 +1,4 @@
-package com.example.app.usecase
+package com.example.app.usecase.account
 
 import com.example.domain.Account
 import com.example.infra.account.model.AccountRequest

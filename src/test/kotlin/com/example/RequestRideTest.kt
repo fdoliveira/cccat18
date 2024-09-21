@@ -1,8 +1,8 @@
 package com.example
 
-import com.example.app.usecase.RequestRide
-import com.example.app.usecase.GetRide
-import com.example.app.usecase.Signup
+import com.example.app.usecase.ride.RequestRide
+import com.example.app.usecase.ride.GetRide
+import com.example.app.usecase.account.Signup
 import com.example.infra.account.model.AccountRequest
 import com.example.infra.di.repositoryModule
 import com.example.infra.ride.model.RideRequest

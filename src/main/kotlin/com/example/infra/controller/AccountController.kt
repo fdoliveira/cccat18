@@ -1,7 +1,7 @@
 package com.example.infra.controller
 
-import com.example.app.usecase.GetAccount
-import com.example.app.usecase.Signup
+import com.example.app.usecase.account.GetAccount
+import com.example.app.usecase.account.Signup
 import com.example.infra.account.model.AccountRequest
 import com.example.infra.account.model.GetAccountResponse
 import io.ktor.http.HttpStatusCode

@@ -1,4 +1,4 @@
-package com.example.app.usecase
+package com.example.app.usecase.ride
 
 import com.example.domain.Ride
 import com.example.infra.repository.AccountRepository

@@ -1,7 +1,7 @@
 package com.example
 
-import com.example.app.usecase.GetAccount
-import com.example.app.usecase.Signup
+import com.example.app.usecase.account.GetAccount
+import com.example.app.usecase.account.Signup
 import com.example.infra.account.model.AccountRequest
 import com.example.infra.di.repositoryModule
 import org.koin.core.context.startKoin
