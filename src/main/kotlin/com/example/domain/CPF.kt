@@ -1,12 +1,9 @@
 package com.example.domain
 
-import kotlinx.serialization.Serializable
-
 const val CPF_VALID_LENGTH = 11
 const val FIRST_DIGIT_FACTOR = 10
 const val SECOND_DIGIT_FACTOR = 11
 
-@Serializable
 data class CPF(val value: String) {
     init {
         if (!validate()) {

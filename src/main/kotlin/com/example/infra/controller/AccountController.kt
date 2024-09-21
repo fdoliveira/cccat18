@@ -45,6 +45,5 @@ fun Routing.accountController() {
                 status = HttpStatusCode.UnprocessableEntity
             )
         }
-
     }
 }
