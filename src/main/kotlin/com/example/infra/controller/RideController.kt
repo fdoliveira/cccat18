@@ -1,7 +1,7 @@
 package com.example.infra.controller
 
-import com.example.app.usecase.RequestRide
-import com.example.app.usecase.GetRide
+import com.example.app.usecase.ride.RequestRide
+import com.example.app.usecase.ride.GetRide
 import com.example.infra.ride.model.GetRideResponse
 import com.example.infra.ride.model.RideRequest
 import io.ktor.http.HttpStatusCode
@@ -23,8 +23,8 @@ fun Routing.rideController() {
             )
             return@get
         }
-        val ride = getRide.execute(rideId)
-        val rideResponse = GetRideResponse.from(ride)
+        val rideCommand = getRide.execute(rideId)
+        val rideResponse = GetRideResponse.from(rideCommand)
         call.respond(
             message = rideResponse,
             status = HttpStatusCode.OK

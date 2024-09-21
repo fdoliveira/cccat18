@@ -1,14 +1,15 @@
 package com.example.infra.ride.model
 
-import com.example.domain.Ride
+import com.example.app.usecase.ride.RideOutput
+import com.example.infra.account.model.AccountResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetRideResponse(
     @SerialName("ride_id") val rideId: String? = null,
-    @SerialName("passenger_id") val passengerId: String,
-    @SerialName("driver_id") val driverId: String? = null,
+    val passenger: AccountResponse,
+    val driver: AccountResponse? = null,
     val status: String? = null,
     val fare: Double? = null,
     val distance: Double? = null,
@@ -19,19 +20,19 @@ data class GetRideResponse(
     val date: String? = null,
 ) {
     companion object {
-        fun from(ride: Ride): GetRideResponse {
+        fun from(ride: RideOutput): GetRideResponse {
             return GetRideResponse(
-                rideId = ride.getRideId(),
-                passengerId = ride.getPassengerId(),
-                driverId = ride.getDriverId(),
-                status = ride.getStatus(),
-                fare = ride.getFare(),
-                distance = ride.getDistance(),
-                fromLat = ride.getFromLat(),
-                fromLong = ride.getFromLong(),
-                toLat = ride.getToLat(),
-                toLong = ride.getToLong(),
-                date = ride.getDate().toString(),
+                rideId = ride.rideId,
+                passenger = AccountResponse.from(ride.passenger),
+                driver = if (ride.driver != null) AccountResponse.from(ride.driver) else null,
+                status = ride.status,
+                fare = ride.fare,
+                distance = ride.distance,
+                fromLat = ride.fromLat,
+                fromLong = ride.fromLong,
+                toLat = ride.toLat,
+                toLong = ride.toLong,
+                date = ride.date,
             )
         }
     }

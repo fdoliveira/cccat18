@@ -1,8 +1,8 @@
 package com.example
 
-import com.example.app.usecase.RequestRide
-import com.example.app.usecase.GetRide
-import com.example.app.usecase.Signup
+import com.example.app.usecase.ride.RequestRide
+import com.example.app.usecase.ride.GetRide
+import com.example.app.usecase.account.Signup
 import com.example.infra.account.model.AccountRequest
 import com.example.infra.di.repositoryModule
 import com.example.infra.ride.model.RideRequest
@@ -56,11 +56,11 @@ class GetRideTest: KoinTest {
         val response = requestRide.execute(ride)
         val rideId = response.rideId
         // when
-        val savedRide = getRide.execute(rideId)
+        val rideOutput = getRide.execute(rideId)
         // then
-        assertEquals(savedRide.getRideId(), rideId)
-        assertEquals(savedRide.getPassengerId(), ride.passengerId)
-        assertEquals(savedRide.getStatus(), "requested")
+        assertEquals(rideOutput.rideId, rideId)
+        assertEquals(rideOutput.passenger.accountId, ride.passengerId)
+        assertEquals(rideOutput.status, "requested")
     }
 
     @Test
