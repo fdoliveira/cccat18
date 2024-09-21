@@ -12,10 +12,8 @@ class Ride {
     private val status: String?
     private val fare: Double?
     private val distance: Double?
-    private val fromLat: Double
-    private val fromLong: Double
-    private val toLat: Double
-    private val toLong: Double
+    private val from: Coord
+    private val to: Coord
     private val date: LocalDateTime?
 
     constructor(rideId: String? = null,
@@ -35,10 +33,8 @@ class Ride {
         this.status = status?.let { status }
         this.fare = fare?.let { fare }
         this.distance = distance?.let { distance }
-        this.fromLat = fromLat
-        this.fromLong = fromLong
-        this.toLat = toLat
-        this.toLong = toLong
+        this.from = Coord(fromLat, fromLong)
+        this.to = Coord(toLat, toLong)
         this.date = date?.let { date }
     }
 
@@ -73,10 +69,10 @@ class Ride {
              status: String? = this.status,
              fare: Double? = this.fare,
              distance: Double? = this.distance,
-             fromLat: Double = this.fromLat,
-             fromLong: Double = this.fromLong,
-             toLat: Double = this.toLat,
-             toLong: Double = this.toLong,
+             fromLat: Double = this.from.lat,
+             fromLong: Double = this.from.long,
+             toLat: Double = this.to.lat,
+             toLong: Double = this.to.long,
              date: LocalDateTime? = this.date) = Ride(
         rideId = rideId,
         passengerId = passengerId,
@@ -97,9 +93,9 @@ class Ride {
     fun getStatus(): String? = status
     fun getFare(): Double? = fare
     fun getDistance(): Double? = distance
-    fun getFromLat(): Double = fromLat
-    fun getFromLong(): Double = fromLong
-    fun getToLat(): Double = toLat
-    fun getToLong(): Double = toLong
+    fun getFromLat(): Double = from.lat
+    fun getFromLong(): Double = from.long
+    fun getToLat(): Double = to.lat
+    fun getToLong(): Double = to.long
     fun getDate(): Date? = date?.toJavaLocalDateTime()?.toInstant(ZoneOffset.UTC)?.let { Date.from(it) }
 }
