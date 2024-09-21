@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreateRideResponse(
+data class RequestRideResponse(
     @SerialName("ride_id")
     val rideId: String
 )

@@ -1,6 +1,6 @@
 package com.example.infra.controller
 
-import com.example.app.usecase.CreateRide
+import com.example.app.usecase.RequestRide
 import com.example.app.usecase.GetRide
 import com.example.infra.ride.model.GetRideResponse
 import com.example.infra.ride.model.RideRequest
@@ -32,7 +32,7 @@ fun Routing.rideController() {
     }
     post("/rides") {
         val input = call.receive<RideRequest>()
-        val ride = CreateRide()
+        val ride = RequestRide()
         try {
             val response = ride.execute(input)
             call.respond(

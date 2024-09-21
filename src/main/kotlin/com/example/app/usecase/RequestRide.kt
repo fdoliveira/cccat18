@@ -5,14 +5,14 @@ import com.example.infra.repository.AccountRepository
 import com.example.infra.repository.AccountRepositoryDatabase
 import com.example.infra.repository.RideRepository
 import com.example.infra.repository.RideRepositoryDatabase
-import com.example.infra.ride.model.CreateRideResponse
+import com.example.infra.ride.model.RequestRideResponse
 import com.example.infra.ride.model.RideRequest
 
-class CreateRide() {
+class RequestRide() {
     private val rideRepository: RideRepository by lazy { RideRepositoryDatabase() }
     private val accountRepository: AccountRepository by lazy { AccountRepositoryDatabase() }
 
-    fun execute(input: RideRequest): CreateRideResponse {
+    fun execute(input: RideRequest): RequestRideResponse {
         val ride = Ride.create(
             passengerId = input.passengerId,
             fromLat = input.fromLat,
@@ -25,6 +25,6 @@ class CreateRide() {
         if (!account.isPassenger()) { throw Exception("Not a Passenger") }
         if (rideRepository.getUncompletedRideByPassengerId(input.passengerId) != null) { throw Exception("This Passenger have a Ride in progress") }
         val rideId = rideRepository.saveRide(ride)
-        return CreateRideResponse(rideId)
+        return RequestRideResponse(rideId)
     }
 }

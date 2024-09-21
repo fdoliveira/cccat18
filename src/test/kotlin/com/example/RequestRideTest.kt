@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.app.usecase.CreateRide
+import com.example.app.usecase.RequestRide
 import com.example.app.usecase.GetRide
 import com.example.app.usecase.Signup
 import com.example.infra.account.model.AccountRequest
@@ -15,14 +15,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class CreateRideTest: KoinTest {
+class RequestRideTest: KoinTest {
     private lateinit var getRide: GetRide
-    private lateinit var createRide: CreateRide
+    private lateinit var requestRide: RequestRide
 
     @BeforeTest
     fun setup() {
         getRide = GetRide()
-        createRide = CreateRide()
+        requestRide = RequestRide()
         stopKoin() // to remove 'A Koin Application has already been started'
         startKoin {
             modules(repositoryModule)
@@ -35,7 +35,7 @@ class CreateRideTest: KoinTest {
     }
 
     @Test
-    fun givenValidRide_whenCallCreateRide_thenCreateRide() {
+    fun givenValidRide_whenCallRequestRide_thenCreateRide() {
         // given
         val accountRequest = AccountRequest(
             name = "John Doe",
@@ -52,13 +52,13 @@ class CreateRideTest: KoinTest {
             toLat = -6.4599549,
             toLong = -37.0937225,
         )
-        val response = createRide.execute(rideRequest)
+        val response = requestRide.execute(rideRequest)
         // then
         assert(response.rideId.isNotEmpty())
     }
 
     @Test
-    fun givenRideWithDriver_whenCallCreateRide_thenReturnNotPassengerException() {
+    fun givenRideWithDriver_whenCallRequestRide_thenReturnNotPassengerException() {
         // given
         val account = AccountRequest(
             name = "John Doe",
@@ -78,14 +78,14 @@ class CreateRideTest: KoinTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            createRide.execute(ride)
+            requestRide.execute(ride)
         }
         // then
         assertEquals("Not a Passenger", exception.message)
     }
 
     @Test
-    fun givenRideWithPassengerWithRideInProgress_whenCallCreateRide_thenReturnPassengerWithRideInProgressException() {
+    fun givenRideWithPassengerWithRideInProgress_whenCallRequestRide_thenReturnPassengerWithRideInProgressException() {
         // given
         val account = AccountRequest(
             name = "John Doe",
@@ -105,7 +105,7 @@ class CreateRideTest: KoinTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            createRide.execute(ride)
+            requestRide.execute(ride)
         }
         // then
         assertEquals("Not a Passenger", exception.message)

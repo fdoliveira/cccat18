@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.app.usecase.CreateRide
+import com.example.app.usecase.RequestRide
 import com.example.app.usecase.GetRide
 import com.example.app.usecase.Signup
 import com.example.infra.account.model.AccountRequest
@@ -18,12 +18,12 @@ import kotlin.test.assertFailsWith
 
 class GetRideTest: KoinTest {
     private lateinit var getRide: GetRide
-    private lateinit var createRide: CreateRide
+    private lateinit var requestRide: RequestRide
 
     @BeforeTest
     fun setup() {
         getRide = GetRide()
-        createRide = CreateRide()
+        requestRide = RequestRide()
         stopKoin() // to remove 'A Koin Application has already been started'
         startKoin {
             modules(repositoryModule)
@@ -53,7 +53,7 @@ class GetRideTest: KoinTest {
             toLat = -6.4599549,
             toLong = -37.0937225,
         )
-        val response = createRide.execute(ride)
+        val response = requestRide.execute(ride)
         val rideId = response.rideId
         // when
         val savedRide = getRide.execute(rideId)
