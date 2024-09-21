@@ -2,8 +2,9 @@ package com.example.infra.controller
 
 import com.example.app.usecase.account.GetAccount
 import com.example.app.usecase.account.Signup
-import com.example.infra.account.model.AccountRequest
+import com.example.infra.account.model.SignupRequest
 import com.example.infra.account.model.GetAccountResponse
+import com.example.infra.account.model.SignupResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
@@ -31,12 +32,14 @@ fun Routing.accountController() {
         )
     }
     post("/signup") {
-        val input = call.receive<AccountRequest>()
+        val input = call.receive<SignupRequest>()
+        var signupCommand = input.toSignupCommand()
         val signup = Signup()
         try {
-            val response = signup.execute(input)
+            val responseOutput = signup.execute(signupCommand)
+            val signupResponse = SignupResponse.from(responseOutput)
             call.respond(
-                message = response,
+                message = signupResponse,
                 status = HttpStatusCode.Created
             )
         } catch (e: Exception) {

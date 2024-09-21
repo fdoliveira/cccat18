@@ -1,9 +1,9 @@
 package com.example.infra.controller
 
-import com.example.app.usecase.ride.RequestRide
 import com.example.app.usecase.ride.GetRide
+import com.example.app.usecase.ride.RequestRide
 import com.example.infra.ride.model.GetRideResponse
-import com.example.infra.ride.model.RideRequest
+import com.example.infra.ride.model.RequestRideRequest
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
@@ -31,10 +31,11 @@ fun Routing.rideController() {
         )
     }
     post("/rides") {
-        val input = call.receive<RideRequest>()
+        val input = call.receive<RequestRideRequest>()
+        val requestRideCommand = input.toRequestRideCommand()
         val ride = RequestRide()
         try {
-            val response = ride.execute(input)
+            val response = ride.execute(requestRideCommand)
             call.respond(
                 message = response,
                 status = HttpStatusCode.Created

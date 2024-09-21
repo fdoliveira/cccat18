@@ -2,7 +2,7 @@ package com.example
 
 import com.example.app.usecase.account.GetAccount
 import com.example.app.usecase.account.Signup
-import com.example.infra.account.model.AccountRequest
+import com.example.app.usecase.account.SignupCommand
 import com.example.infra.di.repositoryModule
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -38,7 +38,7 @@ class GetAccountTest: KoinTest {
     @Test
     fun givenValidAccountId_whenCallGetAccount_thenReturnSavedAccount() {
         // given
-        val expectedAccount = AccountRequest(
+        val expectedAccount = SignupCommand(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -50,13 +50,13 @@ class GetAccountTest: KoinTest {
         // when
         val savedAccount = getAccount.execute(accountId)
         // then
-        assertEquals(savedAccount.getAccountId(), accountId)
-        assertEquals(savedAccount.getName(), expectedAccount.name)
-        assertEquals(savedAccount.getEmail(), expectedAccount.email)
-        assertEquals(savedAccount.getCPF(), expectedAccount.cpf)
-        assertEquals(savedAccount.isPassenger(), true)
-        assertEquals(savedAccount.isDriver(), false)
-        assertNull(savedAccount.getCarPlate())
+        assertEquals(savedAccount.accountId, accountId)
+        assertEquals(savedAccount.name, expectedAccount.name)
+        assertEquals(savedAccount.email, expectedAccount.email)
+        assertEquals(savedAccount.cpf, expectedAccount.cpf)
+        assertEquals(savedAccount.isPassenger, true)
+        assertEquals(savedAccount.isDriver, false)
+        assertNull(savedAccount.carPlate)
     }
 
     @Test

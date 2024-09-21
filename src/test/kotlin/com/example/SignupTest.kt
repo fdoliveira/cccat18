@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.app.usecase.account.Signup
-import com.example.infra.account.model.AccountRequest
+import com.example.app.usecase.account.SignupCommand
 import com.example.infra.di.repositoryModule
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -31,7 +31,7 @@ class SignupTest: KoinTest {
     @Test
     fun givenValidPassenger_whenCallSignup_thenCreateAccount() {
         // given
-        val account = AccountRequest(
+        val signupCommand = SignupCommand(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -39,7 +39,7 @@ class SignupTest: KoinTest {
             password = "123456"
         )
         // when
-        val response = signup.execute(account)
+        val response = signup.execute(signupCommand)
         // then
         assert(response.accountId.isNotEmpty())
     }
@@ -47,7 +47,7 @@ class SignupTest: KoinTest {
     @Test
     fun givenPassengerWithAnInvalidName_whenCallSignup_thenReturnInvalidNameException() {
         // given
-        val account = AccountRequest(
+        val signupCommand = SignupCommand(
             name = "John",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -56,7 +56,7 @@ class SignupTest: KoinTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup.execute(account)
+            signup.execute(signupCommand)
         }
         // then
         assert(exception.message == "Invalid name")
@@ -65,7 +65,7 @@ class SignupTest: KoinTest {
     @Test
     fun givenPassengerWithAnInvalidEmail_whenCallSignup_thenReturnInvalidEmailException() {
         // given
-        val account = AccountRequest(
+        val signupCommand = SignupCommand(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}",
@@ -74,7 +74,7 @@ class SignupTest: KoinTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup.execute(account)
+            signup.execute(signupCommand)
         }
         // then
         assert(exception.message == "Invalid email")
@@ -83,7 +83,7 @@ class SignupTest: KoinTest {
     @Test
     fun givenPassengerWithAnInvalidCpf_whenCallSignup_thenReturnInvalidCpfException() {
         // given
-        val account = AccountRequest(
+        val signupCommand = SignupCommand(
             name = "John Doe",
             cpf = "1746326905",
             email = "john.doe${Math.random()}@gmail.com",
@@ -92,7 +92,7 @@ class SignupTest: KoinTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup.execute(account)
+            signup.execute(signupCommand)
         }
         // then
         assert(exception.message == "Invalid cpf")
@@ -101,7 +101,7 @@ class SignupTest: KoinTest {
     @Test
     fun givenDriverWithAnInvalidCarPlate_whenCallSignup_thenReturnInvalidCarPlateException() {
         //given
-        val account = AccountRequest(
+        val signupCommand = SignupCommand(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -111,7 +111,7 @@ class SignupTest: KoinTest {
         )
         // when
         val exception = assertFailsWith<Exception> {
-            signup.execute(account)
+            signup.execute(signupCommand)
         }
         // then
         assert(exception.message == "Invalid car plate")
@@ -130,22 +130,5 @@ class SignupTest: KoinTest {
     @Test
     fun givenValidPassenger_whenCallSignup_thenCreateAccountWithMock() {
         // TODO: Implement test with mock
-
-//        val mailerMock = mockk<MailerGatewayMemory>()
-//        val accountMock = mockk<AccountDAOMemory>()
-//        val signupMock = Signup(accountMock, mailerMock)
-//        // given
-//        val account = Account(
-//            name = "John Doe",
-//            cpf = "17463269051",
-//            email = "john.doe${Math.random()}@gmail.com",
-//            isPassenger = true,
-//            password = "123456"
-//        )
-//        // when
-//        val response = signupMock.execute(account)
-//        // then
-//        assert(response.accountId.isNotEmpty())
-//        verify(exactly = 1) { mailerMock.send(account.email, "Welcome!", "...") }
     }
 }

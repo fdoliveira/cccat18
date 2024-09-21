@@ -1,12 +1,12 @@
 package com.example.app.usecase.ride
 
-import com.example.app.usecase.account.AccountOutput
+import com.example.app.usecase.account.GetAccountOutput
 import com.example.domain.Ride
 
-data class RideOutput(
+data class GetRideOutput(
     val rideId: String,
-    val passenger: AccountOutput,
-    val driver: AccountOutput?,
+    val passenger: GetAccountOutput,
+    val driver: GetAccountOutput?,
     val status: String,
     val fare: Double?,
     val distance: Double?,
@@ -17,8 +17,8 @@ data class RideOutput(
     val date: String
 ) {
     companion object {
-        fun from(ride: Ride, passenger: AccountOutput, driver: AccountOutput?): RideOutput {
-            return RideOutput(
+        fun from(ride: Ride, passenger: GetAccountOutput, driver: GetAccountOutput?): GetRideOutput {
+            return GetRideOutput(
                 rideId = ride.getRideId()!!,
                 passenger = passenger,
                 driver = driver,

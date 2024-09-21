@@ -1,15 +1,15 @@
 package com.example.infra.ride.model
 
-import com.example.app.usecase.ride.RideOutput
-import com.example.infra.account.model.AccountResponse
+import com.example.app.usecase.ride.GetRideOutput
+import com.example.infra.account.model.GetAccountResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetRideResponse(
     @SerialName("ride_id") val rideId: String? = null,
-    val passenger: AccountResponse,
-    val driver: AccountResponse? = null,
+    val passenger: GetAccountResponse,
+    val driver: GetAccountResponse? = null,
     val status: String? = null,
     val fare: Double? = null,
     val distance: Double? = null,
@@ -20,11 +20,11 @@ data class GetRideResponse(
     val date: String? = null,
 ) {
     companion object {
-        fun from(ride: RideOutput): GetRideResponse {
+        fun from(ride: GetRideOutput): GetRideResponse {
             return GetRideResponse(
                 rideId = ride.rideId,
-                passenger = AccountResponse.from(ride.passenger),
-                driver = if (ride.driver != null) AccountResponse.from(ride.driver) else null,
+                passenger = GetAccountResponse.from(ride.passenger),
+                driver = if (ride.driver != null) GetAccountResponse.from(ride.driver) else null,
                 status = ride.status,
                 fare = ride.fare,
                 distance = ride.distance,

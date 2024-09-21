@@ -1,6 +1,6 @@
 package com.example.infra.account.model
 
-import com.example.domain.Account
+import com.example.app.usecase.account.GetAccountOutput
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,15 +19,15 @@ data class GetAccountResponse(
     val carPlate: String? = null,
 ) {
     companion object {
-        fun from(account: Account): GetAccountResponse {
+        fun from(account: GetAccountOutput): GetAccountResponse {
             return GetAccountResponse(
-                accountId = account.getAccountId().toString(),
-                name = account.getName(),
-                email = account.getEmail(),
-                cpf = account.getCPF(),
-                isPassenger = account.isPassenger(),
-                isDriver = account.isDriver(),
-                carPlate = account.getCarPlate(),
+                accountId = account.accountId,
+                name = account.name,
+                email = account.email,
+                cpf = account.cpf,
+                isPassenger = account.isPassenger,
+                isDriver = account.isDriver,
+                carPlate = account.carPlate,
             )
         }
     }

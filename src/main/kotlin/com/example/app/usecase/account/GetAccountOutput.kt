@@ -2,7 +2,7 @@ package com.example.app.usecase.account
 
 import com.example.domain.Account
 
-data class AccountOutput(
+data class GetAccountOutput(
     val accountId: String,
     val name: String,
     val email: String,
@@ -12,8 +12,8 @@ data class AccountOutput(
     val carPlate: String? = null
 ) {
     companion object {
-        fun from(account: Account): AccountOutput {
-            return AccountOutput(
+        fun from(account: Account): GetAccountOutput {
+            return GetAccountOutput(
                 accountId = account.getAccountId()!!,
                 name = account.getName(),
                 email = account.getEmail(),

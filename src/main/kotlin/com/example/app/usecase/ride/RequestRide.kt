@@ -6,13 +6,12 @@ import com.example.infra.repository.AccountRepositoryDatabase
 import com.example.infra.repository.RideRepository
 import com.example.infra.repository.RideRepositoryDatabase
 import com.example.infra.ride.model.RequestRideResponse
-import com.example.infra.ride.model.RideRequest
 
 class RequestRide() {
     private val rideRepository: RideRepository by lazy { RideRepositoryDatabase() }
     private val accountRepository: AccountRepository by lazy { AccountRepositoryDatabase() }
 
-    fun execute(input: RideRequest): RequestRideResponse {
+    fun execute(input: RequestRideCommand): RequestRideResponse {
         val ride = Ride.create(
             passengerId = input.passengerId,
             fromLat = input.fromLat,

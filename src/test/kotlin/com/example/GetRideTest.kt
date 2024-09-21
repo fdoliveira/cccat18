@@ -1,11 +1,11 @@
 package com.example
 
-import com.example.app.usecase.ride.RequestRide
-import com.example.app.usecase.ride.GetRide
 import com.example.app.usecase.account.Signup
-import com.example.infra.account.model.AccountRequest
+import com.example.app.usecase.account.SignupCommand
+import com.example.app.usecase.ride.GetRide
+import com.example.app.usecase.ride.RequestRide
+import com.example.app.usecase.ride.RequestRideCommand
 import com.example.infra.di.repositoryModule
-import com.example.infra.ride.model.RideRequest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
@@ -38,7 +38,7 @@ class GetRideTest: KoinTest {
     @Test
     fun givenValidRideId_whenCallGetRide_thenReturnSavedRide() {
         // given
-        val account = AccountRequest(
+        val account = SignupCommand(
             name = "John Doe",
             cpf = "17463269051",
             email = "john.doe${Math.random()}@gmail.com",
@@ -46,20 +46,20 @@ class GetRideTest: KoinTest {
             password = "123456"
         )
         val accountResponse = Signup().execute(account)
-        val ride = RideRequest(
+        val rideCommand = RequestRideCommand(
             passengerId = accountResponse.accountId,
             fromLat = -6.3637562,
             fromLong = -36.970218,
             toLat = -6.4599549,
             toLong = -37.0937225,
         )
-        val response = requestRide.execute(ride)
+        val response = requestRide.execute(rideCommand)
         val rideId = response.rideId
         // when
         val rideOutput = getRide.execute(rideId)
         // then
         assertEquals(rideOutput.rideId, rideId)
-        assertEquals(rideOutput.passenger.accountId, ride.passengerId)
+        assertEquals(rideOutput.passenger.accountId, rideCommand.passengerId)
         assertEquals(rideOutput.status, "requested")
     }
 
